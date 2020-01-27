@@ -24,7 +24,7 @@ namespace Widget_Tracker.Models
         [Required]
         [DataType(DataType.Date)]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime TimeTimeStamp { get; set; }
+        public DateTime TimeStamp { get; set; }
 
         public Line AssociatedLine { get; set; }
 

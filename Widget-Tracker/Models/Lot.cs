@@ -11,16 +11,24 @@ namespace Widget_Tracker.Models
     {
         public int Id { get; set; }
 
+        [Required]
         public string ProductName { get; set; }
 
-        public string LineId { get; set; }
+        [Required]
+        public int LineId { get; set; }
 
-        public string UserId { get; set; }
+        [Required]
+        public int UserId { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         [Display(Name = "Date Created")]
         public DateTime DateCreated { get; set; }
+
+        public ApplicationUser User { get; set; }
+
+        public Line AssociatedLine { get; set; }
+               
     }
 }
