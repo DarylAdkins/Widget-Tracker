@@ -26,8 +26,9 @@ namespace Widget_Tracker.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime TimeStamp { get; set; }
 
-        public Line AssociatedLine { get; set; }
+        public Line Line { get; set; }
 
+        public List<LotProcess> LotProcesses { get; set; } = new List<LotProcess>();
 
     }
 }

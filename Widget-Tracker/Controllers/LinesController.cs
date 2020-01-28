@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Widget_Tracker.Data;
 using Widget_Tracker.Models;
@@ -56,11 +57,12 @@ namespace Widget_Tracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description")] Line line)
         {
+
             if (ModelState.IsValid)
             {
                 _context.Add(line);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Create", "Processes", new {id = line.Id }); 
             }
             return View(line);
         }

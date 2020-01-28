@@ -18,7 +18,7 @@ namespace Widget_Tracker.Models
         public int LineId { get; set; }
 
         [Required]
-        public int UserId { get; set; }
+        public string UserId { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
@@ -29,6 +29,8 @@ namespace Widget_Tracker.Models
         public ApplicationUser User { get; set; }
 
         public Line AssociatedLine { get; set; }
-               
+
+        public List<LotProcess> LotProcesses { get; set; } = new List<LotProcess>();
+
     }
 }

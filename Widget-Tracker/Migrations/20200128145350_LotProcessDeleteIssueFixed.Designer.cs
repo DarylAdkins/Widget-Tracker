@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Widget_Tracker.Data;
 
-namespace Widget_Tracker.Data.Migrations
+namespace Widget_Tracker.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200128145350_LotProcessDeleteIssueFixed")]
+    partial class LotProcessDeleteIssueFixed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -231,7 +233,7 @@ namespace Widget_Tracker.Data.Migrations
                         {
                             Id = "00000000-ffff-ffff-ffff-ffffffffffff",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "52972368-cb64-449a-b791-997fc2819589",
+                            ConcurrencyStamp = "003fb69b-a137-4d45-a457-c0fddb524ead",
                             Email = "admin@admin.com",
                             EmailConfirmed = true,
                             FirstName = "admin",
@@ -239,7 +241,7 @@ namespace Widget_Tracker.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@ADMIN.COM",
                             NormalizedUserName = "ADMIN@ADMIN.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEFPKSlQBvgr5Z/GaZWGkzlH7gxeGEYtpHEmdyBiZybmGvQieKgebNZawWHgU4OaMZg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEIDmUnk64+yKUIuySKp1IvuGU64lfDrC8RJy82sKUTs1pDZANGcN+4HB7GmceMZtlQ==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "7f434309-a4d9-48e9-9ebb-8803db794577",
                             TwoFactorEnabled = false,
@@ -286,17 +288,15 @@ namespace Widget_Tracker.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId1")
+                    b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("LineId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Lots");
                 });
@@ -324,6 +324,10 @@ namespace Widget_Tracker.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LotId");
+
+                    b.HasIndex("ProcessId");
+
                     b.ToTable("LotProcesses");
                 });
 
@@ -334,13 +338,13 @@ namespace Widget_Tracker.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("AssociatedLineId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(55)")
                         .HasMaxLength(55);
+
+                    b.Property<int>("LineId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -353,7 +357,7 @@ namespace Widget_Tracker.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AssociatedLineId");
+                    b.HasIndex("LineId");
 
                     b.ToTable("Processes");
                 });
@@ -419,14 +423,33 @@ namespace Widget_Tracker.Data.Migrations
 
                     b.HasOne("Widget_Tracker.Models.ApplicationUser", "User")
                         .WithMany("MyLots")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Widget_Tracker.Models.LotProcess", b =>
+                {
+                    b.HasOne("Widget_Tracker.Models.Lot", "Lot")
+                        .WithMany("LotProcesses")
+                        .HasForeignKey("LotId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Widget_Tracker.Models.Process", "Process")
+                        .WithMany("LotProcesses")
+                        .HasForeignKey("ProcessId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Widget_Tracker.Models.Process", b =>
                 {
-                    b.HasOne("Widget_Tracker.Models.Line", "AssociatedLine")
+                    b.HasOne("Widget_Tracker.Models.Line", "Line")
                         .WithMany("Processes")
-                        .HasForeignKey("AssociatedLineId");
+                        .HasForeignKey("LineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

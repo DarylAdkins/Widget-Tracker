@@ -3,17 +3,15 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Widget_Tracker.Data;
 
-namespace Widget_Tracker.Data.Migrations
+namespace Widget_Tracker.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200127142854_wtsetup2")]
-    partial class wtsetup2
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -233,7 +231,7 @@ namespace Widget_Tracker.Data.Migrations
                         {
                             Id = "00000000-ffff-ffff-ffff-ffffffffffff",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "873166fd-2d0f-4742-971e-12f01d6f0100",
+                            ConcurrencyStamp = "003fb69b-a137-4d45-a457-c0fddb524ead",
                             Email = "admin@admin.com",
                             EmailConfirmed = true,
                             FirstName = "admin",
@@ -241,7 +239,7 @@ namespace Widget_Tracker.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@ADMIN.COM",
                             NormalizedUserName = "ADMIN@ADMIN.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAENS9d3AV/X8ZHb/KgQ4B3JBQeI23y3giyWueoBeaG+GDDylTj/quO+oqKY/oSc/nww==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEIDmUnk64+yKUIuySKp1IvuGU64lfDrC8RJy82sKUTs1pDZANGcN+4HB7GmceMZtlQ==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "7f434309-a4d9-48e9-9ebb-8803db794577",
                             TwoFactorEnabled = false,
@@ -288,17 +286,15 @@ namespace Widget_Tracker.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId1")
+                    b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("LineId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Lots");
                 });
@@ -326,6 +322,10 @@ namespace Widget_Tracker.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LotId");
+
+                    b.HasIndex("ProcessId");
+
                     b.ToTable("LotProcesses");
                 });
 
@@ -350,7 +350,8 @@ namespace Widget_Tracker.Data.Migrations
 
                     b.Property<DateTime>("TimeStamp")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.HasKey("Id");
 
@@ -420,12 +421,29 @@ namespace Widget_Tracker.Data.Migrations
 
                     b.HasOne("Widget_Tracker.Models.ApplicationUser", "User")
                         .WithMany("MyLots")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Widget_Tracker.Models.LotProcess", b =>
+                {
+                    b.HasOne("Widget_Tracker.Models.Lot", "Lot")
+                        .WithMany("LotProcesses")
+                        .HasForeignKey("LotId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Widget_Tracker.Models.Process", "Process")
+                        .WithMany("LotProcesses")
+                        .HasForeignKey("ProcessId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Widget_Tracker.Models.Process", b =>
                 {
-                    b.HasOne("Widget_Tracker.Models.Line", "AssociatedLine")
+                    b.HasOne("Widget_Tracker.Models.Line", "Line")
                         .WithMany("Processes")
                         .HasForeignKey("LineId")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -17,7 +17,7 @@ namespace Widget_Tracker.Models
         [StringLength(55, ErrorMessage = "Please shorten the manufacturing line description to 55 characters")]
         public string Description { get; set; }
 
-        public string Process { get; set; }
+       
 
         public List<Process> Processes { get; set; } = new List<Process>();
 

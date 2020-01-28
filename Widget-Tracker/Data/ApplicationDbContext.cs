@@ -43,6 +43,14 @@ namespace Widget_Tracker.Data
             user.PasswordHash = passwordHash.HashPassword(user, "Admin8*");
             modelBuilder.Entity<ApplicationUser>().HasData(user);
 
+            modelBuilder.Entity<Process>().HasMany(process => process.LotProcesses)
+                       .WithOne(lotprocess => lotprocess.Process)
+                       .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Lot>().HasMany(lot => lot.LotProcesses)
+                       .WithOne(lotprocess => lotprocess.Lot)
+                       .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<Process>()
                .Property(D => D.TimeStamp)
                .HasDefaultValueSql("GETDATE()");

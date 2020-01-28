@@ -1,10 +1,12 @@
-﻿@model Widget_Tracker.Models.ViewModels.CreateProcessViewModel
+﻿@model Widget_Tracker.Models.Process
 
 @{
     ViewData["Title"] = "Create";
 }
 
 <h1>Create</h1>
+
+<p></p>
 
 <h4>Process</h4>
 <hr />
@@ -13,22 +15,27 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Process.Name" class="control-label"></label>
-                <input asp-for="Process.Name" class="form-control" />
-                <span asp-validation-for="Process.Name" class="text-danger"></span>
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Process.Description" class="control-label"></label>
-                <input asp-for="Process.Description" class="form-control" />
-                <span asp-validation-for="Process.Description" class="text-danger"></span>
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Process.LineId" class="control-label"></label>
-                <select asp-for="Process.LineId" class ="form-control" asp-items="ViewBag.LineId"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
+            <input type="submit" asp-action="Create" asp-route-id="Id" class="btn btn-primary"/>
+        </div>
+        <div class="form-group">
+            <input type="submit" name="Details" value="Save and View Line" class="btn btn-primary" />
+        </div>
+
+            <button asp-action="Create" asp-route-id="Id">Save and Create Another</button>
+
+            <button asp-action="CreateExit" asp-route-id="Id">Save and View Line</button>
+
+
         </form>
     </div>
 </div>

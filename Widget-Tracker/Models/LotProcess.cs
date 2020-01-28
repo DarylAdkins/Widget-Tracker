@@ -26,5 +26,11 @@ namespace Widget_Tracker.Models
         [Display(Name = "Time lot finished")]
         public DateTime TimeOut { get; set; }
 
+        public Lot Lot { get; set; }
+
+        public Process Process { get; set; }
+
+
+
     }
 }

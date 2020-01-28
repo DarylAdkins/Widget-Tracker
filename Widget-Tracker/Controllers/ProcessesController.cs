@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Widget_Tracker.Data;
 using Widget_Tracker.Models;
-using Widget_Tracker.Models.ViewModels;
 
 namespace Widget_Tracker.Controllers
 {
@@ -23,7 +19,7 @@ namespace Widget_Tracker.Controllers
         // GET: Processes
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Processes.Include(p => p.AssociatedLine);
+            var applicationDbContext = _context.Processes.Include(p => p.Line);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -36,7 +32,7 @@ namespace Widget_Tracker.Controllers
             }
 
             var process = await _context.Processes
-                .Include(p => p.AssociatedLine)
+                .Include(p => p.Line)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (process == null)
             {
@@ -47,37 +43,29 @@ namespace Widget_Tracker.Controllers
         }
 
         // GET: Processes/Create
-        public IActionResult Create()
+        public IActionResult Create(int id)
         {
-            //ViewData["CohortId"] = new SelectList(_context.Cohort, "Id", "Id");
-            CreateProcessViewModel vm = new CreateProcessViewModel();
-            vm.Lines = _context.Lines.Select(l => new SelectListItem
-            {
-                Value = l.Id.ToString(),
-                Text = l.Name
-            }).ToList();
-
-            vm.Lines.Insert(0, new SelectListItem()
-            {
-                Value = "0",
-                Text = "Select intended line"
-            });
-            return View(vm);
+            return View();
         }
 
+        
         // POST: Processes/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+
+        //This method is used to post new process and then redirect to enter another process for the line
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,TimeStamp")] Process process)
+        public async Task<IActionResult> Create([FromRoute] int id, [Bind("Name,Description")] Process process)        
         {
-            
+           // ModelState.Remove("Id");
+
             if (ModelState.IsValid)
             {
+                process.LineId = id;
                 _context.Add(process);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Create", new { id });
             }
             //ViewData["LineId"] = new SelectList(_context.Lines, "Id", "Description", process.LineId);
             return View(process);
@@ -145,7 +133,7 @@ namespace Widget_Tracker.Controllers
             }
 
             var process = await _context.Processes
-                .Include(p => p.AssociatedLine)
+                .Include(p => p.Line)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (process == null)
             {
@@ -169,6 +157,24 @@ namespace Widget_Tracker.Controllers
         private bool ProcessExists(int id)
         {
             return _context.Processes.Any(e => e.Id == id);
+        }
+
+
+        //This method is used to post new process and then redirect to enter another process for the line
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateExit([FromRoute] int id, [Bind("Name,Description")] Process process, Line line)
+        {
+
+            if (ModelState.IsValid)
+            {
+                process.LineId = id;
+                _context.Add(process);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Details", "Lines", new { id = line.Id });
+            }
+            //ViewData["LineId"] = new SelectList(_context.Lines, "Id", "Description", process.LineId);
+            return View(process);
         }
     }
 }
