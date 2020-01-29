@@ -56,16 +56,23 @@ namespace Widget_Tracker.Controllers
         //This method is used to post new process and then redirect to enter another process for the line
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([FromRoute] int id, [Bind("Name,Description")] Process process)        
+        public async Task<IActionResult> Create([FromRoute] int id, string buttonName, [Bind("Name,Description")] Process process)        
         {
-           // ModelState.Remove("Id");
-
+           
             if (ModelState.IsValid)
             {
                 process.LineId = id;
                 _context.Add(process);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Create", new { id });
+
+                if (buttonName == "saveCreate" || buttonName == null )
+                {
+                    return RedirectToAction("Create", new { id });
+                }
+                if (buttonName == "saveExit")
+                {
+                    return RedirectToAction("Details", "Lines", new { id });
+                }
             }
             //ViewData["LineId"] = new SelectList(_context.Lines, "Id", "Description", process.LineId);
             return View(process);
@@ -160,21 +167,6 @@ namespace Widget_Tracker.Controllers
         }
 
 
-        //This method is used to post new process and then redirect to enter another process for the line
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateExit([FromRoute] int id, [Bind("Name,Description")] Process process, Line line)
-        {
-
-            if (ModelState.IsValid)
-            {
-                process.LineId = id;
-                _context.Add(process);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Details", "Lines", new { id = line.Id });
-            }
-            //ViewData["LineId"] = new SelectList(_context.Lines, "Id", "Description", process.LineId);
-            return View(process);
-        }
+       
     }
 }
