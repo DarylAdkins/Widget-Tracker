@@ -58,7 +58,11 @@ namespace Widget_Tracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([FromRoute] int id, string buttonName, [Bind("Name,Description")] Process process)        
         {
-           
+            if (buttonName == "exit")
+            {
+                return RedirectToAction("Details", "Lines", new { id });
+            }
+
             if (ModelState.IsValid)
             {
                 process.LineId = id;
@@ -100,31 +104,32 @@ namespace Widget_Tracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,LineId,TimeStamp")] Process process)
+        public async Task<IActionResult> Edit( int LineId, int id, [Bind("Name,Description")] Process process)
         {
-            if (id != process.Id)
-            {
-                return NotFound();
-            }
+            //if (id != process.Id)
+            //{
+            //    return NotFound();
+            //}
 
             if (ModelState.IsValid)
             {
-                try
+                //try
                 {
+                    process.LineId = LineId;
                     _context.Update(process);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProcessExists(process.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                //catch (DbUpdateConcurrencyException)
+                //{
+                //    if (!ProcessExists(process.Id))
+                //    {
+                //        return NotFound();
+                //    }
+                //    else
+                //    {
+                //        throw;
+                //    }
+                //}
                 return RedirectToAction(nameof(Index));
             }
             //ViewData["LineId"] = new SelectList(_context.Lines, "Id", "Description", process.LineId);
