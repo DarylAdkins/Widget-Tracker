@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Routing;
@@ -13,20 +15,30 @@ namespace Widget_Tracker.Controllers
 {
     public class LinesController : Controller
     {
+        // Private field to store user manager
+        private readonly UserManager<ApplicationUser> _userManager;
+
         private readonly ApplicationDbContext _context;
 
-        public LinesController(ApplicationDbContext context)
+        // Inject user manager into constructor
+        public LinesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
+        // Private method to get current user
+        private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
+
         // GET: Lines
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Lines.ToListAsync());
         }
 
         // GET: Lines/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -46,6 +58,7 @@ namespace Widget_Tracker.Controllers
         }
 
         // GET: Lines/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -54,6 +67,7 @@ namespace Widget_Tracker.Controllers
         // POST: Lines/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description")] Line line)
@@ -69,6 +83,7 @@ namespace Widget_Tracker.Controllers
         }
 
         // GET: Lines/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -87,6 +102,7 @@ namespace Widget_Tracker.Controllers
         // POST: Lines/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Line line)
@@ -120,6 +136,7 @@ namespace Widget_Tracker.Controllers
         }
 
         // GET: Lines/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -138,6 +155,7 @@ namespace Widget_Tracker.Controllers
         }
 
         // POST: Lines/Delete/5
+        [Authorize]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
