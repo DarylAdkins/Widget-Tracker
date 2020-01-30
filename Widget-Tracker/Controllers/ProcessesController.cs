@@ -72,12 +72,13 @@ namespace Widget_Tracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([FromRoute] int id, string buttonName, [Bind("Name,Description")] Process process)        
         {
-            
-            
-            //if (buttonName == "exit")
-            //{
-            //    return RedirectToAction("Details", "Lines", new { id });
-            //}
+            if (id == 0)
+            {
+                return NotFound();
+            }
+
+
+
 
             if (ModelState.IsValid)
             {
