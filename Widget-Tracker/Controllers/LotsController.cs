@@ -34,13 +34,10 @@ namespace Widget_Tracker.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Lots
-                .Include(lot => lot.User)
-                .Include(lot => lot.AssociatedLine);
-                //.Include(line => line.Id);
+            ApplicationUser loggedInUser = await GetCurrentUserAsync(); var applicationDbContext = _context.Lots
+                .Include(lot => lot.User).Where(lot => lot.User == loggedInUser)
+                .Include(lot => lot.AssociatedLine);              
                
-
-
             return View(await applicationDbContext.ToListAsync());
         }
 
