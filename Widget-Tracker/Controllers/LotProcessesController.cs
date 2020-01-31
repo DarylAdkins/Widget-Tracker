@@ -59,12 +59,21 @@ namespace Widget_Tracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,LotId,ProcessId,TimeIn,TimeOut")] LotProcess lotProcess)
+        public async Task<IActionResult> Create([Bind("Id,LotId,ProcessId,TimeIn,TimeOut")] LotProcess lotProcess, List<Process> processes)
         {
+            if (processes is null)
+            {
+                throw new ArgumentNullException(nameof(processes));
+            }
+
             if (ModelState.IsValid)
             {
-                _context.Add(lotProcess);
-                await _context.SaveChangesAsync();
+                {
+                    foreach (Process singleProcess in processes) 
+
+                    _context.Add(lotProcess);
+                    await _context.SaveChangesAsync();
+                }
                 return RedirectToAction(nameof(Index));
             }
             ViewData["LotId"] = new SelectList(_context.Lots, "Id", "ProductName", lotProcess.LotId);
