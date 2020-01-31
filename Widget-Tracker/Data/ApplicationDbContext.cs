@@ -54,6 +54,12 @@ namespace Widget_Tracker.Data
             modelBuilder.Entity<Process>()
                .Property(D => D.TimeStamp)
                .HasDefaultValueSql("GETDATE()");
+
+            modelBuilder.Entity<Lot>()
+               .Property(D => D.DateCreated)
+               .HasDefaultValueSql("GETDATE()");
+
+           
         }
 
 

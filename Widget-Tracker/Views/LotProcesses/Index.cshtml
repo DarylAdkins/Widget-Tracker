@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Widget_Tracker.Models.Lot>
+﻿@model IEnumerable<Widget_Tracker.Models.LotProcess>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,16 +13,16 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ProductName)
+                @Html.DisplayNameFor(model => model.TimeIn)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.AssociatedLine)
+                @Html.DisplayNameFor(model => model.TimeOut)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DateCreated)
+                @Html.DisplayNameFor(model => model.Lot)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.User)
+                @Html.DisplayNameFor(model => model.Process)
             </th>
             <th></th>
         </tr>
@@ -31,17 +31,16 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.ProductName)
+                @Html.DisplayFor(modelItem => item.TimeIn)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AssociatedLine.Name)
+                @Html.DisplayFor(modelItem => item.TimeOut)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DateCreated)
+                @Html.DisplayFor(modelItem => item.Lot.ProductName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.User.LastName), 
-                @Html.DisplayFor(modelItem => item.User.FirstName)
+                @Html.DisplayFor(modelItem => item.Process.Description)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

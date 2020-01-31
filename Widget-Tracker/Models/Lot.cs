@@ -12,6 +12,7 @@ namespace Widget_Tracker.Models
         public int Id { get; set; }
 
         [Required]
+        [Display(Name = "Product Name")]
         public string ProductName { get; set; }
 
         [Required]
@@ -26,8 +27,10 @@ namespace Widget_Tracker.Models
         [Display(Name = "Date Created")]
         public DateTime DateCreated { get; set; }
 
+        [Display(Name = "Lot Owner")]
         public ApplicationUser User { get; set; }
 
+        [Display(Name = "Manufacturing Line")]
         public Line AssociatedLine { get; set; }
 
         public List<LotProcess> LotProcesses { get; set; } = new List<LotProcess>();

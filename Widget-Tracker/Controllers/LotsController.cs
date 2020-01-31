@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Widget_Tracker.Data;
 using Widget_Tracker.Models;
+using Widget_Tracker.Models.ViewModels;
 
 namespace Widget_Tracker.Controllers
 {
@@ -33,7 +34,13 @@ namespace Widget_Tracker.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Lots.Include(l => l.User);
+            var applicationDbContext = _context.Lots
+                .Include(lot => lot.User)
+                .Include(lot => lot.AssociatedLine);
+                //.Include(line => line.Id);
+               
+
+
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -61,8 +68,20 @@ namespace Widget_Tracker.Controllers
         [Authorize]
         public IActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
-            return View();
+            
+            CreateLotViewModel vm = new CreateLotViewModel();
+            vm.Lines = _context.Lines.Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.Name
+            }).ToList();
+
+            vm.Lines.Insert(0, new SelectListItem()
+            {
+                Value = "0",
+                Text = "Please choose a manufacturing line"
+            });
+            return View(vm);
         }
 
         // POST: Lots/Create
@@ -71,16 +90,23 @@ namespace Widget_Tracker.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ProductName,LineId,UserId,DateCreated")] Lot lot)
+        public async Task<IActionResult> Create(CreateLotViewModel vm)
         {
+            ModelState.Remove("Lot.UserId");
             if (ModelState.IsValid)
             {
-                _context.Add(lot);
+                var currentUser = await GetCurrentUserAsync();
+                vm.Lot.UserId = currentUser.Id;
+                _context.Add(vm.Lot);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", lot.UserId);
-            return View(lot);
+            vm.Lines = _context.Lines.Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.Name
+            }).ToList();
+            return View(vm);
         }
 
         // GET: Lots/Edit/5

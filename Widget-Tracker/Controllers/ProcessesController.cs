@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Widget_Tracker.Data;
 using Widget_Tracker.Models;
+using Widget_Tracker.Models.ViewModels;
 
 namespace Widget_Tracker.Controllers
 {
@@ -72,20 +73,21 @@ namespace Widget_Tracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([FromRoute] int id, string buttonName, [Bind("Name,Description")] Process process)        
         {
+            
+            //ensure a line Id is associated to the process
             if (id == 0)
             {
                 return NotFound();
             }
-
-
-
-
+                                 
             if (ModelState.IsValid)
             {
                 process.LineId = id;
                 _context.Add(process);
                 await _context.SaveChangesAsync();
 
+
+                //redirects are determined by the button clicked on the processes create view.
                 if (buttonName == "saveCreate" || buttonName == null )
                 {
                     return RedirectToAction("Create", new { id });
@@ -95,7 +97,7 @@ namespace Widget_Tracker.Controllers
                     return RedirectToAction("Details", "Lines", new { id });
                 }
             }
-            //ViewData["LineId"] = new SelectList(_context.Lines, "Id", "Description", process.LineId);
+            
             return View(process);
         }
 
@@ -113,7 +115,7 @@ namespace Widget_Tracker.Controllers
             {
                 return NotFound();
             }
-            //ViewData["LineId"] = new SelectList(_context.Lines, "Id", "Description", process.LineId);
+           
             return View(process);
         }
 
@@ -132,26 +134,26 @@ namespace Widget_Tracker.Controllers
 
             if (ModelState.IsValid)
             {
-                //try
+                try
                 {
                    
                     _context.Update(process);
                     await _context.SaveChangesAsync();
                 }
-                //catch (DbUpdateConcurrencyException)
-                //{
-                //    if (!ProcessExists(process.Id))
-                //    {
-                //        return NotFound();
-                //    }
-                //    else
-                //    {
-                //        throw;
-                //    }
-                //}
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ProcessExists(process.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
-            //ViewData["LineId"] = new SelectList(_context.Lines, "Id", "Description", process.LineId);
+            
             return View(process);
         }
 
