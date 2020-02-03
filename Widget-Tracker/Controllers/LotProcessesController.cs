@@ -49,8 +49,8 @@ namespace Widget_Tracker.Controllers
         // GET: LotProcesses/Create
         public IActionResult Create()
         {
-            ViewData["LotId"] = new SelectList(_context.Lots, "Id", "ProductName");
-            ViewData["ProcessId"] = new SelectList(_context.Processes, "Id", "Description");
+            //ViewData["LotId"] = new SelectList(_context.Lots, "Id", "ProductName");
+            //ViewData["ProcessId"] = new SelectList(_context.Processes, "Id", "Description");
             return View();
         }
 
@@ -59,7 +59,7 @@ namespace Widget_Tracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,LotId,ProcessId,TimeIn,TimeOut")] LotProcess lotProcess, List<Process> processes)
+        public async Task<IActionResult> Create(int lineId, LotProcess lotProcess, List<Process> processes)
         {
             if (processes is null)
             {
@@ -69,15 +69,16 @@ namespace Widget_Tracker.Controllers
             if (ModelState.IsValid)
             {
                 {
-                    foreach (Process singleProcess in processes) 
+                    foreach (Process singleProcess in processes)
 
-                    _context.Add(lotProcess);
-                    await _context.SaveChangesAsync();
+                        _context.Add(lotProcess);
                 }
+                    await _context.SaveChangesAsync();
+                
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["LotId"] = new SelectList(_context.Lots, "Id", "ProductName", lotProcess.LotId);
-            ViewData["ProcessId"] = new SelectList(_context.Processes, "Id", "Description", lotProcess.ProcessId);
+            //ViewData["LotId"] = new SelectList(_context.Lots, "Id", "ProductName", lotProcess.LotId);
+            //ViewData["ProcessId"] = new SelectList(_context.Processes, "Id", "Description", lotProcess.ProcessId);
             return View(lotProcess);
         }
 

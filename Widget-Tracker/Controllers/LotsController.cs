@@ -34,7 +34,8 @@ namespace Widget_Tracker.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            ApplicationUser loggedInUser = await GetCurrentUserAsync(); var applicationDbContext = _context.Lots
+               
+                ApplicationUser loggedInUser = await GetCurrentUserAsync(); var applicationDbContext = _context.Lots
                 .Include(lot => lot.User).Where(lot => lot.User == loggedInUser)
                 .Include(lot => lot.AssociatedLine);              
                
@@ -45,14 +46,18 @@ namespace Widget_Tracker.Controllers
         [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
+           
             if (id == null)
             {
                 return NotFound();
             }
-
+            ApplicationUser loggedInUser = await GetCurrentUserAsync(); var applicationDbContext = _context.Lots;
             var lot = await _context.Lots
-                .Include(l => l.User)
+                .Include(lot => lot.User).Where(lot => lot.User == loggedInUser)
+                .Include(lot => lot.AssociatedLine)
+                .Include(lot => lot.LotProcesses)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (lot == null)
             {
                 return NotFound();
@@ -65,7 +70,6 @@ namespace Widget_Tracker.Controllers
         [Authorize]
         public IActionResult Create()
         {
-            
             CreateLotViewModel vm = new CreateLotViewModel();
             vm.Lines = _context.Lines.Select(c => new SelectListItem
             {
@@ -87,16 +91,28 @@ namespace Widget_Tracker.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateLotViewModel vm)
+        public async Task<IActionResult> Create(CreateLotViewModel vm, List<Line> processes)
         {
             ModelState.Remove("Lot.UserId");
             if (ModelState.IsValid)
             {
                 var currentUser = await GetCurrentUserAsync();
                 vm.Lot.UserId = currentUser.Id;
-                _context.Add(vm.Lot);
+                List<Process> listOfProcesses = await _context.Processes.Where(p => p.LineId == vm.Lot.LineId).ToListAsync();
+                _context.Lots.Add(vm.Lot);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                foreach (Process singleProcess in listOfProcesses)
+                {
+                    LotProcess newlp = new LotProcess()
+                    {
+                        LotId = vm.Lot.Id,
+                        ProcessId = singleProcess.Id
+                    };
+                    _context.LotProcesses.Add(newlp);
+                }
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Details", new { id = vm.Lot.Id });
             }
             vm.Lines = _context.Lines.Select(c => new SelectListItem
             {
@@ -105,9 +121,12 @@ namespace Widget_Tracker.Controllers
             }).ToList();
             return View(vm);
         }
+    //    
 
-        // GET: Lots/Edit/5
-        [Authorize]
+
+
+    // GET: Lots/Edit/5
+    [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -192,6 +211,13 @@ namespace Widget_Tracker.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        //public IActionResult Setup(int LineId)
+        //{
+        //    return RedirectToAction("Create", "LotProcesses", new { id = LineId });
+        //}
+
+
 
         private bool LotExists(int id)
         {

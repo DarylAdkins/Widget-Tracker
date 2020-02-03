@@ -16,6 +16,7 @@ namespace Widget_Tracker.Models
         public string ProductName { get; set; }
 
         [Required]
+        [Display(Name = "Designated Manufacturing Line")]
         public int LineId { get; set; }
 
         [Required]

@@ -10,33 +10,42 @@
     <h4>Lot</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.ProductName)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ProductName)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.LineId)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LineId)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AssociatedLine.Name)
         </dd>
-        <dt class = "col-sm-2">
+        @*@foreach (Process singleProcess in Model.AssProcesses)
+        {
+            <dd>
+                <ul>@singleProcess.Name  </ul>
+            </dd>
+        }*@
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.DateCreated)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.DateCreated)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.User)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.Id)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.User.FirstName)
+            @Html.DisplayFor(model => model.User.LastName)
         </dd>
     </dl>
 </div>
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+

@@ -62,7 +62,9 @@ namespace Widget_Tracker.Data
            
         }
 
-
-
+        internal void Add(Lot lot, Process singleProcess)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

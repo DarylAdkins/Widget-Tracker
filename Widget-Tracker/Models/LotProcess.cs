@@ -15,16 +15,16 @@ namespace Widget_Tracker.Models
 
         public int ProcessId { get; set; }
 
-        [Required]
+        
         [DataType(DataType.Date)]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         [Display(Name = "Time lot started")]
-        public DateTime TimeIn { get; set; }
+        public DateTime? TimeIn { get; set; }
 
         [DataType(DataType.Date)]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         [Display(Name = "Time lot finished")]
-        public DateTime TimeOut { get; set; }
+        public DateTime? TimeOut { get; set; }
 
         public Lot Lot { get; set; }
 

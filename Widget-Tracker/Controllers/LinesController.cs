@@ -74,7 +74,7 @@ namespace Widget_Tracker.Controllers
         {
 
             if (ModelState.IsValid)
-            {
+            { 
                 _context.Add(line);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Create", "Processes", new {id = line.Id }); 

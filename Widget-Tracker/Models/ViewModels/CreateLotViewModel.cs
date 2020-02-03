@@ -13,6 +13,8 @@ namespace Widget_Tracker.Models.ViewModels
         public List<SelectListItem> Lines { get; set; }
 
         public Lot Lot { get; set; }
+
+        //public List<Process> lineProcesses = new 
     }
 }
 
