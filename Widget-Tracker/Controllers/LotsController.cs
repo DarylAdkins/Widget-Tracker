@@ -41,7 +41,7 @@ namespace Widget_Tracker.Controllers
                 .Include(lot => lot.User)                
                 .Include(lot => lot.AssociatedLine).ToListAsync();
 
-            List<Lot> lots = await _context.Lots.Where(p => p.User == loggedInUser).ToListAsync();
+            //List<Lot> lots = await _context.Lots.Where(p => p.User == loggedInUser).ToListAsync();
             if (searchQuery != null)
             {
                 lotsList = lotsList.Where(lots => lots.ProductName.ToString().Contains(searchQuery, StringComparison.OrdinalIgnoreCase)).ToList();

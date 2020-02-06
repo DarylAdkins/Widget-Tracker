@@ -47,7 +47,7 @@ namespace Widget_Tracker.Controllers
             }
 
             var line = await _context.Lines
-                .Include(p => p.AssProcesses)
+                .Include(p => p.AssociatedProcesses)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (line == null)
             {

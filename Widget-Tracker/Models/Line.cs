@@ -21,7 +21,7 @@ namespace Widget_Tracker.Models
 
        
 
-        public List<Process> AssProcesses { get; set; } = new List<Process>();
+        public List<Process> AssociatedProcesses { get; set; } = new List<Process>();
 
     }
 }

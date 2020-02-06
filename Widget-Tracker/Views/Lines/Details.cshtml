@@ -23,10 +23,10 @@
             @Html.DisplayFor(model => model.Description)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.AssProcesses)
+            @Html.DisplayNameFor(model => model.AssociatedProcesses)
         </dt>
 
-        @foreach (Process singleProcess in Model.AssProcesses)
+        @foreach (Process singleProcess in Model.AssociatedProcesses)
         {
             <dd>
                 <ul>@singleProcess.Name  </ul>
