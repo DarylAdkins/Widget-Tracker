@@ -17,12 +17,12 @@ namespace Widget_Tracker.Models
 
         
         [DataType(DataType.Date)]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+       
         [Display(Name = "Time lot started")]
         public DateTime? TimeIn { get; set; }
 
         [DataType(DataType.Date)]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        
         [Display(Name = "Time lot finished")]
         public DateTime? TimeOut { get; set; }
 

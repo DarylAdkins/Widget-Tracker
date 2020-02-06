@@ -32,21 +32,33 @@ namespace Widget_Tracker.Controllers
 
         // GET: Lots
         [Authorize]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchQuery)
         {
                
-                ApplicationUser loggedInUser = await GetCurrentUserAsync(); var applicationDbContext = _context.Lots
-                .Include(lot => lot.User).Where(lot => lot.User == loggedInUser)
-                .Include(lot => lot.AssociatedLine);              
-               
-            return View(await applicationDbContext.ToListAsync());
+                ApplicationUser loggedInUser = await GetCurrentUserAsync();
+
+            List<Lot> lotsList = await _context.Lots.Where(p => p.User == loggedInUser)                
+                .Include(lot => lot.User)                
+                .Include(lot => lot.AssociatedLine).ToListAsync();
+
+            List<Lot> lots = await _context.Lots.Where(p => p.User == loggedInUser).ToListAsync();
+            if (searchQuery != null)
+            {
+                lotsList = lotsList.Where(lots => lots.ProductName.ToString().Contains(searchQuery, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+
+
+
+            return View(lotsList);
         }
 
         // GET: Lots/Details/5
         [Authorize]
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details([FromRoute] int? id, LotProcess lotProcess)
         {
-           
+            
+
             if (id == null)
             {
                 return NotFound();
@@ -55,9 +67,14 @@ namespace Widget_Tracker.Controllers
             var lot = await _context.Lots
                 .Include(lot => lot.User).Where(lot => lot.User == loggedInUser)
                 .Include(lot => lot.AssociatedLine)
-                .Include(lot => lot.LotProcesses)
+                .Include(lot => lot.LotProcesses) 
+                .ThenInclude(lot => lot.Process)
+                
                 .FirstOrDefaultAsync(m => m.Id == id);
-
+            //for running lots, need to add conditionals to look for LotProcess accounts with LotId that have time 
+            //in value and time out =null. if none are null???
+            //update time in on LotProcesses with edit type function??
+            //ViewModel??? because of needing to read lotprocess and lot detail info??
             if (lot == null)
             {
                 return NotFound();
@@ -70,6 +87,9 @@ namespace Widget_Tracker.Controllers
         [Authorize]
         public IActionResult Create()
         {
+            
+
+
             CreateLotViewModel vm = new CreateLotViewModel();
             vm.Lines = _context.Lines.Select(c => new SelectListItem
             {
@@ -93,6 +113,7 @@ namespace Widget_Tracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateLotViewModel vm, List<Line> processes)
         {
+           
             ModelState.Remove("Lot.UserId");
             if (ModelState.IsValid)
             {
@@ -121,26 +142,30 @@ namespace Widget_Tracker.Controllers
             }).ToList();
             return View(vm);
         }
-    //    
+       
 
 
 
     // GET: Lots/Edit/5
     [Authorize]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id, int LotId)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
+            ApplicationUser loggedInUser = await GetCurrentUserAsync(); var applicationDbContext = _context.Lots
+               .Include(lot => lot.User).Where(lot => lot.User == loggedInUser)
+               .Include(lot => lot.AssociatedLine);
+
             var lot = await _context.Lots.FindAsync(id);
             if (lot == null)
             {
                 return NotFound();
             }
-            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", lot.UserId);
-            return View(lot);
+            //ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", lot.UserId);
+         return View (lot);
         }
 
         // POST: Lots/Edit/5
@@ -149,8 +174,9 @@ namespace Widget_Tracker.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ProductName,LineId,UserId,DateCreated")] Lot lot)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ProductName,LineId,UserId,DateCreated")] Lot lot, LotProcess lotProcess)
         {
+           
             if (id != lot.Id)
             {
                 return NotFound();
@@ -160,7 +186,7 @@ namespace Widget_Tracker.Controllers
             {
                 try
                 {
-                    _context.Update(lot);
+                    _context.Update(lotProcess);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -176,7 +202,7 @@ namespace Widget_Tracker.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", lot.UserId);
+            //ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", lot.UserId);
             return View(lot);
         }
 
@@ -212,13 +238,35 @@ namespace Widget_Tracker.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        //public IActionResult Setup(int LineId)
-        //{
-        //    return RedirectToAction("Create", "LotProcesses", new { id = LineId });
-        //}
+        //Update LotProcess table to show advancement of lot through line
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> NextStep(int Id, LotProcess lotprocess)
+        {
+            ApplicationUser loggedInUser = await GetCurrentUserAsync();
 
+            var listOfProcesses = await _context.LotProcesses.Where(lp => lp.LotId == Id).OrderBy(p => p.Process.TimeStamp)
+               .Include(lp => lp.Lot)
+               .Include(lp => lp.Process)
+               .Where(lot => lot.Lot.User == loggedInUser).ToListAsync();
 
+            LotProcess currentstep = listOfProcesses.Where(lop => lop.TimeIn == null).FirstOrDefault();
 
+            if (currentstep == null)
+                {
+                    return RedirectToAction("Details", new { id = Id });
+                }
+           
+            
+            currentstep.TimeIn = DateTime.Now;
+            
+            _context.Update(currentstep);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = currentstep.LotId });
+        }
+            
+        
         private bool LotExists(int id)
         {
             return _context.Lots.Any(e => e.Id == id);

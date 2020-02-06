@@ -22,7 +22,9 @@ namespace Widget_Tracker.Controllers
         // GET: LotProcesses
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.LotProcesses.Include(l => l.Lot).Include(l => l.Process);
+            var applicationDbContext = _context.LotProcesses
+                .Include(l => l.Lot)
+                .Include(l => l.Process);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -83,12 +85,13 @@ namespace Widget_Tracker.Controllers
         }
 
         // GET: LotProcesses/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id, int LineId)
         {
             if (id == null)
             {
                 return NotFound();
             }
+
 
             var lotProcess = await _context.LotProcesses.FindAsync(id);
             if (lotProcess == null)
@@ -97,7 +100,7 @@ namespace Widget_Tracker.Controllers
             }
             ViewData["LotId"] = new SelectList(_context.Lots, "Id", "ProductName", lotProcess.LotId);
             ViewData["ProcessId"] = new SelectList(_context.Processes, "Id", "Description", lotProcess.ProcessId);
-            return View(lotProcess);
+            return RedirectToAction("Edit", new { id = lotProcess.Id }); ;
         }
 
         // POST: LotProcesses/Edit/5
@@ -105,7 +108,7 @@ namespace Widget_Tracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,LotId,ProcessId,TimeIn,TimeOut")] LotProcess lotProcess)
+        public async Task<IActionResult> Edit(int LineId, int id, [Bind("Id,LotId,ProcessId")] LotProcess lotProcess)
         {
             if (id != lotProcess.Id)
             {

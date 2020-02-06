@@ -9,6 +9,12 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<form asp-controller="Lots" asp-action="Index">
+    <input name="searchQuery" placeholder="Search Product" />
+
+    <button>Search</button>
+</form>
 <table class="table">
     <thead>
         <tr>
