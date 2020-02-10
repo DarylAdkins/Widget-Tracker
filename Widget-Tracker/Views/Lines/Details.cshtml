@@ -1,40 +1,44 @@
 ﻿@model Widget_Tracker.Models.Line
-
-@{
-    ViewData["Title"] = "Details";
-}
-
-<h1>Details</h1>
-
-<div>
-    <h4>Line</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.AssociatedProcesses)
-        </dt>
-
-        @foreach (Process singleProcess in Model.AssociatedProcesses)
-        {
-            <dd>
-                <ul>@singleProcess.Name  </ul>
-            </dd>
+    <div class="textBackgrounds">
+        @{
+            ViewData["Title"] = "Details";
         }
-        </dl>
-</div>
-<div>
-   
-    <a asp-action="Index">Back to List</a>
-</div>
+
+        <h1>Details</h1>
+
+        <div>
+            <h4>Line</h4>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Name)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Name)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Description)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Description)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.AssociatedProcesses)
+                </dt>
+
+                <dd class="processContainer">
+                    @foreach (Process singleProcess in Model.AssociatedProcesses)
+                    {
+                <dd>
+                    <p class=processes>
+                        @singleProcess.Name
+                    </p>
+                </dd>
+                }
+            </dl>
+        </div>
+        <div>
+
+            <a asp-action="Index">Back to List</a>
+        </div>
+    </div>

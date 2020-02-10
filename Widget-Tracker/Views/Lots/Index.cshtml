@@ -1,62 +1,64 @@
 ﻿@model IEnumerable<Widget_Tracker.Models.Lot>
+    <div class="textBackgrounds">
+        @{
+            ViewData["Title"] = "Index";
+        }
 
-@{
-    ViewData["Title"] = "Index";
-}
+        <h1>All Product Orders</h1>
 
-<h1>Index</h1>
+        <p>
+            <a asp-action="Create">Place New Product Order</a>
+        </p>
+       
+            <form asp-controller="Lots" asp-action="Index">
+                <input class="searchBox" name="searchQuery" placeholder="Search by Product Name" />
+                <button>Search</button>
+            </form>
+        
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ProductName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.AssociatedLine)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DateCreated)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.User)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.ProductName)</a>
+</td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AssociatedLine.Name)
+</td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DateCreated)
+</td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.User.LastName),
+                            @Html.DisplayFor(modelItem => item.User.FirstName)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |                            
+                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
 
-<form asp-controller="Lots" asp-action="Index">
-    <input name="searchQuery" placeholder="Search Product" />
 
-    <button>Search</button>
-</form>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AssociatedLine)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DateCreated)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AssociatedLine.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateCreated)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.LastName), 
-                @Html.DisplayFor(modelItem => item.User.FirstName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-               
-
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>

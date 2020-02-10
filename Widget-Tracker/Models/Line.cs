@@ -19,8 +19,8 @@ namespace Widget_Tracker.Models
 
         public bool Archived { get; set; }
 
-       
 
+        [Display(Name = "Associated Processes")]
         public List<Process> AssociatedProcesses { get; set; } = new List<Process>();
 
     }
