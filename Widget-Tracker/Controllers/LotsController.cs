@@ -41,7 +41,7 @@ namespace Widget_Tracker.Controllers
                 .Include(lot => lot.User)                
                 .Include(lot => lot.AssociatedLine).ToListAsync();
 
-            //List<Lot> lots = await _context.Lots.Where(p => p.User == loggedInUser).ToListAsync();
+            
             if (searchQuery != null)
             {
                 lotsList = lotsList.Where(lots => lots.ProductName.ToString().Contains(searchQuery, StringComparison.OrdinalIgnoreCase)).ToList();
@@ -71,10 +71,7 @@ namespace Widget_Tracker.Controllers
                 .ThenInclude(lot => lot.Process)
                 
                 .FirstOrDefaultAsync(m => m.Id == id);
-            //for running lots, need to add conditionals to look for LotProcess accounts with LotId that have time 
-            //in value and time out =null. if none are null???
-            //update time in on LotProcesses with edit type function??
-            //ViewModel??? because of needing to read lotprocess and lot detail info??
+            
             if (lot == null)
             {
                 return NotFound();
