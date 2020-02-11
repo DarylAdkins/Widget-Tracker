@@ -53,10 +53,9 @@ namespace Widget_Tracker.Controllers
 
         // GET: Lots/Details/5
         [Authorize]
-        public async Task<IActionResult> Details([FromRoute] int? id, LotProcess lotProcess)
-        {
+        public async Task<IActionResult> Details([FromRoute] int? id, string link, LotProcess lotProcess, Process process)
+        {                      
             
-
             if (id == null)
             {
                 return NotFound();
@@ -75,6 +74,11 @@ namespace Widget_Tracker.Controllers
                 return NotFound();
             }
 
+            //redirects are determined by the button clicked on the lots index view.
+            if (link == "line")
+            {
+                return RedirectToAction("Details", "Lines", new { id = lot.LineId });
+            }
             return View(lot);
         }
 

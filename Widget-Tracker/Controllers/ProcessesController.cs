@@ -37,7 +37,7 @@ namespace Widget_Tracker.Controllers
 
         // GET: Processes/Details/5
         [Authorize]
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, string link)
         {
             if (id == null)
             {
@@ -52,6 +52,10 @@ namespace Widget_Tracker.Controllers
                 return NotFound();
             }
 
+            if (link == "line")
+            {
+                return RedirectToAction("Details", "Lines", new { id = process.LineId });
+            }
             return View(process);
         }
 

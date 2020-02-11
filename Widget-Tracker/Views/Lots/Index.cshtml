@@ -39,10 +39,10 @@
                 {
                     <tr>
                         <td>
-                            <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.ProductName)</a>
+                            <a asp-action="Details" asp-route-link="product" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.ProductName)</a>
 </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.AssociatedLine.Name)
+                            <a asp-action="Details" asp-route-link="line" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.AssociatedLine.Name)</a>
 </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.DateCreated)

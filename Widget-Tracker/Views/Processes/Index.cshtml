@@ -39,8 +39,8 @@
                             @Html.DisplayFor(modelItem => item.TimeStamp)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Line.Name)
-                        </td>
+                            <a asp-action="Details" asp-route-link="line" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Line.Name)</a>
+</td>
                         
                     </tr>
                 }
