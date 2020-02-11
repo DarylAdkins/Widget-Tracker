@@ -46,9 +46,7 @@ namespace Widget_Tracker.Controllers
             {
                 lotsList = lotsList.Where(lots => lots.ProductName.ToString().Contains(searchQuery, StringComparison.OrdinalIgnoreCase)).ToList();
             }
-
-
-
+                       
 
             return View(lotsList);
         }
